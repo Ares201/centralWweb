@@ -16,7 +16,8 @@ export interface Project {
   status: 'planning' | 'in-progress' | 'completed'
   downloadLink?: string
   imageUrl?: string
-  views: number
+  dowload: number
+  viewsTiktok: number
   createdAt: Date
   updatedAt: Date
 }
@@ -40,7 +41,8 @@ export const useProjects = () => {
           status: data.status,
           downloadLink: data.downloadLink,
           imageUrl: data.imageUrl,
-          views: data.views || 0,
+          dowload: data.dowload || 0,
+          viewsTiktok: data.viewsTiktok || 0,
           createdAt: data.createdAt.toDate(),
           updatedAt: data.updatedAt.toDate(),
         } as Project
@@ -79,7 +81,8 @@ export const useProjects = () => {
   ) => {
     await addDoc(collection($db, 'projects'), {
       ...projectData,
-      views: 0,
+      dowload: 0,
+      viewsTiktok: 0,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     })
@@ -110,9 +113,18 @@ export const useProjects = () => {
     const project = projects.value.find(p => p.id === id)
     if (!project) return
 
-    const newViews = project.views + 1
-    await updateDoc(doc($db, 'projects', id), { views: newViews })
-    project.views = newViews
+    const newViews = project.dowload + 1
+    await updateDoc(doc($db, 'projects', id), { dowload: newViews })
+    project.dowload = newViews
+  }
+
+  const incrementViewsTiktok = async (id: string) => {
+    const project = projects.value.find(p => p.id === id)
+    if (!project) return
+
+    const newViews = project.viewsTiktok + 1
+    await updateDoc(doc($db, 'projects', id), { viewsTiktok: newViews })
+    project.viewsTiktok = newViews
   }
 
   return {
@@ -126,5 +138,6 @@ export const useProjects = () => {
     deleteProject,
     updateProjectStatus,
     incrementViews,
+    incrementViewsTiktok,
   }
 }

@@ -139,7 +139,7 @@ const form = ref({
   status: 'completed' as Project['status'],
   downloadLink: '',
   imageUrl: '',
-  views: 0
+  dowload: 0
 })
 
 watch(() => props.project, (newProject) => {
@@ -151,7 +151,7 @@ watch(() => props.project, (newProject) => {
       status: newProject.status,
       downloadLink: newProject.downloadLink || '',
       imageUrl: newProject.imageUrl || '',
-      views: newProject.views
+      dowload: newProject.dowload
     }
   } else {
     form.value = {
@@ -161,7 +161,7 @@ watch(() => props.project, (newProject) => {
       status: 'completed',
       downloadLink: '',
       imageUrl: '',
-      views: 0
+      dowload: 0
     }
   }
 }, { immediate: true })
