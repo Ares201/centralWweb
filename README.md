@@ -1,3 +1,12 @@
+
+# personalCount
+<!-- Deploy Proyecto -->
+npm run build
+npm run generate
+firebase login
+firebase init hosting
+firebase deploy
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
