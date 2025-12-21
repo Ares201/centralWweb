@@ -314,7 +314,7 @@ const completedProjects = computed(() =>
   projects.value.filter(project => project.status === 'completed').map(project => ({
     ...project,
     // Agregar enlace a TikTok si no existe
-    tiktokLink: project.tiktokLink || `https://www.https://www.tiktok.com/@aresdev98`, // Ejemplo
+    tiktokLink: project.tiktokLink || `https://www.tiktok.com/@aresdev98`, // Ejemplo
     // Agregar dificultad si no existe
     difficulty: project.difficulty || (project.type === 'web' ? 'Intermedio' : 'Básico')
   }))
