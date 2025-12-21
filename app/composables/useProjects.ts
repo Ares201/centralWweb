@@ -1,5 +1,12 @@
-import { db } from '../config/firebase'
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from 'firebase/firestore'
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  Timestamp,
+} from 'firebase/firestore'
 
 export interface Project {
   id: string
@@ -15,16 +22,18 @@ export interface Project {
 }
 
 export const useProjects = () => {
+  const { $db } = useNuxtApp()
+
   const projects = ref<Project[]>([])
   const loading = ref(true)
 
   const loadProjects = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'projects'))
-      projects.value = querySnapshot.docs.map(doc => {
-        const data = doc.data()
+      const querySnapshot = await getDocs(collection($db, 'projects'))
+      projects.value = querySnapshot.docs.map(d => {
+        const data = d.data()
         return {
-          id: doc.id,
+          id: d.id,
           title: data.title,
           description: data.description,
           type: data.type,
@@ -33,7 +42,7 @@ export const useProjects = () => {
           imageUrl: data.imageUrl,
           views: data.views || 0,
           createdAt: data.createdAt.toDate(),
-          updatedAt: data.updatedAt.toDate()
+          updatedAt: data.updatedAt.toDate(),
         } as Project
       })
     } catch (error) {
@@ -43,81 +52,67 @@ export const useProjects = () => {
     }
   }
 
-  onMounted(() => {
-    loadProjects()
-  })
+  onMounted(loadProjects)
 
   const searchQuery = ref('')
   const selectedType = ref<string>('all')
   const selectedStatus = ref<string>('all')
 
-  const filteredProjects = computed(() => {
-    return projects.value.filter(project => {
-      const matchesSearch = project.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                          project.description.toLowerCase().includes(searchQuery.value.toLowerCase())
-      const matchesType = selectedType.value === 'all' || project.type === selectedType.value
-      const matchesStatus = selectedStatus.value === 'all' || project.status === selectedStatus.value
+  const filteredProjects = computed(() =>
+    projects.value.filter(project => {
+      const matchesSearch =
+        project.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+
+      const matchesType =
+        selectedType.value === 'all' || project.type === selectedType.value
+
+      const matchesStatus =
+        selectedStatus.value === 'all' || project.status === selectedStatus.value
+
       return matchesSearch && matchesType && matchesStatus
     })
-  })
+  )
 
-  const addProject = async (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      const docRef = await addDoc(collection(db, 'projects'), {
-        ...projectData,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      })
-      await loadProjects()
-    } catch (error) {
-      console.error('Error adding project:', error)
-    }
+  const addProject = async (
+    projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>
+  ) => {
+    await addDoc(collection($db, 'projects'), {
+      ...projectData,
+      views: 0,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    })
+    await loadProjects()
   }
 
-  const updateProject = async (id: string, updates: Partial<Omit<Project, 'id' | 'createdAt'>>) => {
-    try {
-      await updateDoc(doc(db, 'projects', id), {
-        ...updates,
-        updatedAt: Timestamp.now()
-      })
-      const index = projects.value.findIndex(p => p.id === id)
-      if (index !== -1) {
-        projects.value[index] = { ...projects.value[index], ...updates, updatedAt: new Date() } as Project
-      }
-    } catch (error) {
-      console.error('Error updating project:', error)
-    }
+  const updateProject = async (
+    id: string,
+    updates: Partial<Omit<Project, 'id' | 'createdAt'>>
+  ) => {
+    await updateDoc(doc($db, 'projects', id), {
+      ...updates,
+      updatedAt: Timestamp.now(),
+    })
+    await loadProjects()
   }
 
   const deleteProject = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, 'projects', id))
-      const index = projects.value.findIndex(p => p.id === id)
-      if (index !== -1) {
-        projects.value.splice(index, 1)
-      }
-    } catch (error) {
-      console.error('Error deleting project:', error)
-    }
+    await deleteDoc(doc($db, 'projects', id))
+    projects.value = projects.value.filter(p => p.id !== id)
   }
 
   const updateProjectStatus = (id: string, status: Project['status']) => {
-    updateProject(id, { status })
+    return updateProject(id, { status })
   }
 
   const incrementViews = async (id: string) => {
-    try {
-      const project = projects.value.find(p => p.id === id)
-      if (project) {
-        const newViews = project.views + 1
-        await updateDoc(doc(db, 'projects', id), {
-          views: newViews
-        })
-        project.views = newViews
-      }
-    } catch (error) {
-      console.error('Error incrementing views:', error)
-    }
+    const project = projects.value.find(p => p.id === id)
+    if (!project) return
+
+    const newViews = project.views + 1
+    await updateDoc(doc($db, 'projects', id), { views: newViews })
+    project.views = newViews
   }
 
   return {
@@ -130,6 +125,6 @@ export const useProjects = () => {
     updateProject,
     deleteProject,
     updateProjectStatus,
-    incrementViews
+    incrementViews,
   }
 }
