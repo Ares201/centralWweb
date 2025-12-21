@@ -21,12 +21,14 @@
           <Download class="h-3 w-3" />
         </button>
         <button
+          v-if="isAdmin"
           @click="$emit('edit', project)"
           class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 p-1"
         >
           <Edit class="h-3 w-3" />
         </button>
         <button
+          v-if="isAdmin"
           @click="$emit('delete', project.id)"
           class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 p-1"
         >
@@ -48,6 +50,7 @@ import type { Project } from '../composables/useProjects'
 
 interface Props {
   project: Project
+  isAdmin?: boolean
 }
 
 defineProps<Props>()

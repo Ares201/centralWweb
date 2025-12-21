@@ -52,12 +52,14 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <div class="flex space-x-2">
                 <button
+                  v-if="isAdmin"
                   @click="$emit('edit', project)"
                   class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   <Edit class="h-4 w-4" />
                 </button>
                 <button
+                  v-if="isAdmin"
                   @click="$emit('delete', project.id)"
                   class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                 >
@@ -78,6 +80,7 @@ import type { Project } from '../composables/useProjects'
 
 interface Props {
   projects: Project[]
+  isAdmin: boolean
 }
 
 defineProps<Props>()

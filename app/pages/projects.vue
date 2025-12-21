@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+  <div class="min-h-screen bg-gray-800 dark:bg-gray-800 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-8">
@@ -12,6 +12,7 @@
           </div>
           <div class="mt-4 sm:mt-0">
             <button
+              v-if="isAdmin"
               @click="showAddForm = true"
               class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             >
@@ -36,7 +37,7 @@
       <div class="mb-6">
         <div class="flex items-center space-x-4">
           <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Vista:</span>
-          <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+          <div class="flex bg-gray-800 dark:bg-gray-800 rounded-lg p-1">
             <button
               @click="currentView = 'table'"
               :class="[
@@ -77,6 +78,7 @@
       <ProjectTable
         v-else-if="currentView === 'table'"
         :projects="filteredProjects"
+        :is-admin="isAdmin"
         @edit="handleEdit"
         @delete="handleDelete"
       />
@@ -84,6 +86,7 @@
       <ProjectKanban
         v-else
         :projects="filteredProjects"
+        :is-admin="isAdmin"
         @edit="handleEdit"
         @delete="handleDelete"
         @update-status="handleUpdateStatus"
@@ -101,6 +104,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'admin'
+})
 import { ref } from 'vue'
 import { Plus, List, Kanban, Folder } from 'lucide-vue-next'
 import { useProjects } from '../composables/useProjects'
@@ -124,6 +130,18 @@ const {
 const currentView = ref<'table' | 'kanban'>('table')
 const showAddForm = ref(false)
 const editingProject = ref<Project | null>(null)
+
+const isAdmin = computed(() => {
+
+  if (process.client) {
+
+    return localStorage.getItem('userRole') === 'admin'
+
+  }
+
+  return false
+
+})
 
 const handleEdit = (project: Project) => {
   editingProject.value = project

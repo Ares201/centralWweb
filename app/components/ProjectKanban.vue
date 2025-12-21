@@ -23,6 +23,7 @@
             v-for="project in getProjectsByStatus(status.key)"
             :key="project.id"
             :project="project"
+            :is-admin="props.isAdmin"
             :draggable="true"
             @dragstart="onDragStart($event, project)"
             @edit="$emit('edit', project)"
@@ -41,6 +42,7 @@ import type { Project } from '../composables/useProjects'
 
 interface Props {
   projects: Project[]
+  isAdmin: boolean
 }
 
 const props = defineProps<Props>()

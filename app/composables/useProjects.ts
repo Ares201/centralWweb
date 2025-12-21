@@ -16,8 +16,14 @@ export interface Project {
   status: 'planning' | 'in-progress' | 'completed'
   downloadLink?: string
   imageUrl?: string
-  dowload: number
+  views: number
   viewsTiktok: number
+  downloads: number
+  tiktokLink?: string
+  difficulty?: string
+  estimatedTime?: string
+  documentationLink?: string
+  demoLink?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -41,8 +47,14 @@ export const useProjects = () => {
           status: data.status,
           downloadLink: data.downloadLink,
           imageUrl: data.imageUrl,
-          dowload: data.dowload || 0,
+          views: data.views || 0,
           viewsTiktok: data.viewsTiktok || 0,
+          downloads: data.downloads || 0,
+          tiktokLink: data.tiktokLink,
+          difficulty: data.difficulty,
+          estimatedTime: data.estimatedTime,
+          documentationLink: data.documentationLink,
+          demoLink: data.demoLink,
           createdAt: data.createdAt.toDate(),
           updatedAt: data.updatedAt.toDate(),
         } as Project
@@ -113,9 +125,9 @@ export const useProjects = () => {
     const project = projects.value.find(p => p.id === id)
     if (!project) return
 
-    const newViews = project.dowload + 1
-    await updateDoc(doc($db, 'projects', id), { dowload: newViews })
-    project.dowload = newViews
+    const newViews = project.views + 1
+    await updateDoc(doc($db, 'projects', id), { views: newViews })
+    project.views = newViews
   }
 
   const incrementViewsTiktok = async (id: string) => {
@@ -125,6 +137,15 @@ export const useProjects = () => {
     const newViews = project.viewsTiktok + 1
     await updateDoc(doc($db, 'projects', id), { viewsTiktok: newViews })
     project.viewsTiktok = newViews
+  }
+
+  const incrementDownloads = async (id: string) => {
+    const project = projects.value.find(p => p.id === id)
+    if (!project) return
+
+    const newDownloads = (project.downloads || 0) + 1
+    await updateDoc(doc($db, 'projects', id), { downloads: newDownloads })
+    project.downloads = newDownloads
   }
 
   return {
@@ -139,5 +160,6 @@ export const useProjects = () => {
     updateProjectStatus,
     incrementViews,
     incrementViewsTiktok,
+    incrementDownloads,
   }
 }

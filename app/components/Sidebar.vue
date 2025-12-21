@@ -14,13 +14,25 @@
             <span :class="open ? 'inline' : 'hidden'">Proyectos</span>
           </NuxtLink>
         </li>
+        <li>
+          <NuxtLink to="/users" class="flex items-center p-2 rounded-md hover:bg-orange-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+            <User class="w-6 h-6 mr-3 flex-shrink-0" />
+            <span :class="open ? 'inline' : 'hidden'">Usuarios</span>
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/quotations" class="flex items-center p-2 rounded-md hover:bg-orange-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+            <MessageSquare class="w-6 h-6 mr-3 flex-shrink-0" />
+            <span :class="open ? 'inline' : 'hidden'">Cotizaciones</span>
+          </NuxtLink>
+        </li>
       </ul>
     </nav>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { Home, Folder } from 'lucide-vue-next'
+import { Home, Folder, User, MessageSquare } from 'lucide-vue-next'
 
 const props = defineProps<{
   open: boolean
