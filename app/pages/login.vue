@@ -46,12 +46,12 @@
         </button>
 
         <!-- Enlace alternativo -->
-        <div class="text-center pt-4">
+        <!-- <div class="text-center pt-4">
           <button @click="showRegister = !showRegister" type="button"
             class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
             {{ showRegister ? '¿Ya tienes cuenta? Iniciar sesión' : '¿Primera vez? Crear cuenta' }}
           </button>
-        </div>
+        </div>-->
       </form>
 
       <!-- Enlace de regreso -->
