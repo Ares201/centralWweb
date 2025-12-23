@@ -70,25 +70,36 @@
 
 <script setup lang="ts">
 import { collection, getDocs, addDoc, Timestamp } from 'firebase/firestore'
+import type { DocumentData } from 'firebase/firestore'
+import { ref, onMounted } from 'vue'
+
+interface UserState {
+  username: string
+  role: string
+}
 
 const { $db } = useNuxtApp()
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const showRegister = ref(false)
-const users = ref([])
+const users = ref<DocumentData[]>([])
 
+
+// Cargar usuarios desde Firestore
 onMounted(async () => {
   const querySnapshot = await getDocs(collection($db, 'users'))
-  users.value = querySnapshot.docs.map(doc => doc.data())
+  users.value = querySnapshot.docs.map(doc => doc.data() as DocumentData)
 })
 
 const handleLogin = async () => {
   if (showRegister.value) {
+    // Registro
     if (password.value !== confirmPassword.value) {
       alert('Las contraseñas no coinciden')
       return
     }
+
     await addDoc(collection($db, 'users'), {
       username: username.value,
       password: password.value,
@@ -96,20 +107,41 @@ const handleLogin = async () => {
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     })
+
     alert('Cuenta creada correctamente')
     showRegister.value = false
     confirmPassword.value = ''
+    username.value = ''
+    password.value = ''
   } else {
-    const user = users.value.find((u: any) => u.username === username.value && u.password === password.value)
+    // Login
+    const user = users.value.find(
+      (u: any) => u.username === username.value && u.password === password.value
+    )
+
     if (user) {
-      localStorage.setItem('loggedIn', 'true')
-      localStorage.setItem('userRole', user.role)
-      navigateTo('/projects')
+      // Guardar estado tipado en Nuxt
+      const userState = useState<UserState | null>('user', () => null)
+      userState.value = {
+        username: user.username,
+        role: user.role,
+      }
+
+      // Guardar cookies
+      const roleCookie = useCookie('role', { path: '/', maxAge: 60 * 60 * 24 * 7 }) // 7 días
+      roleCookie.value = user.role
+
+      const userCookie = useCookie('user', { path: '/', maxAge: 60 * 60 * 24 * 7 })
+      userCookie.value = user.username
+
+      // Redirigir al inicio
+      navigateTo('/')
     } else {
       alert('Usuario o contraseña incorrectos')
     }
   }
 }
+
 </script>
 
 <style scoped>

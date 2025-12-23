@@ -1,20 +1,22 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+  <div class="min-h-screen">
     <!-- Tabs -->
-    <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav class="-mb-px flex space-x-8">
-          <button @click="activeTab = 'gratuitos'"
-            :class="['py-4 px-1 border-b-2 font-medium text-sm transition-colors', activeTab === 'gratuitos' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300']">
-            Gratuitos
-          </button>
-          <button @click="activeTab = 'personalizadas'"
-            :class="['py-4 px-1 border-b-2 font-medium text-sm transition-colors', activeTab === 'personalizadas' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300']">
-            Soluciones Personalizadas
-          </button>
-        </nav>
-      </div>
-    </div>
+    <PageHeader>
+      <nav class="-mb-px flex space-x-8">
+        <button @click="activeTab = 'gratuitos'" class="py-4 px-1 border-b-2 font-medium text-sm" :class="activeTab === 'gratuitos'
+          ? 'border-blue-500 text-blue-600'
+          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'">
+          Gratuitos
+        </button>
+
+        <button @click="activeTab = 'personalizadas'" class="py-4 px-1 border-b-2 font-medium text-sm" :class="activeTab === 'personalizadas'
+          ? 'border-blue-500 text-blue-600'
+          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'">
+          Soluciones Personalizadas
+        </button>
+      </nav>
+    </PageHeader>
+
 
     <!-- Projects Section -->
     <div v-if="activeTab === 'gratuitos'">
@@ -28,7 +30,7 @@
 
         <!-- Professional Filters -->
         <div class="max-w-4xl mx-auto mb-8">
-          <div class="mb-4">
+          <div class="mb-4 hidden md:flex">
             <div class="flex flex-wrap justify-center gap-3">
               <button @click="selectedType = 'all'" :class="[
                 'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
@@ -82,7 +84,7 @@
         <!-- Projects Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div v-for="project in filteredCompletedProjects" :key="project.id"
-            class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-blue-500 dark:border-blue-600">
+            class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
 
             <!-- Project Image/Thumbnail -->
             <div
@@ -115,33 +117,32 @@
 
             <!-- Project Details -->
             <div class="p-4 md:p-6">
-              <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-                {{ project.description }}
-              </p>
-
-
+              <div class="flex items-center space-x-4 md:space-x-6">
+                <div>
+                  <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                    {{ project.description }}
+                  </p>
+                </div>
+                <div class="text-center">
+                  <div class="flex items-center text-gray-500 dark:text-gray-400">
+                    <Download class="w-4 h-4 mr-2" />
+                    <span class="font-medium">{{ project.downloads || 0 }}</span>
+                  </div>
+                  <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">Descargas</div>
+                </div>
+                <div class="text-center">
+                  <div class="flex items-center text-gray-500 dark:text-gray-400">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z" />
+                    </svg>
+                    <span>{{ project.viewsTiktok }}</span>
+                  </div>
+                  <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">TikTok</div>
+                </div>
+              </div>
               <!-- Project Stats -->
               <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
-                <div class="flex items-center space-x-4 md:space-x-6">
-                  <div class="text-center">
-                    <div class="flex items-center text-gray-500 dark:text-gray-400">
-                      <Download class="w-4 h-4 mr-2" />
-                      <span class="font-medium">{{ project.downloads || 0 }}</span>
-                    </div>
-                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">Descargas</div>
-                  </div>
-                  <div class="text-center">
-                    <div class="flex items-center text-gray-500 dark:text-gray-400">
-                      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                          d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z" />
-                      </svg>
-                      <span>{{ project.viewsTiktok }}</span>
-                    </div>
-                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">TikTok</div>
-                  </div>
-                </div>
-
                 <!-- Action Buttons -->
                 <div class="flex flex-col space-y-3 md:flex-row md:space-y-0 md:space-x-3">
                   <button v-if="project.documentationLink" @click.stop="openDocumentation(project.documentationLink)"
@@ -340,6 +341,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useProjects } from '../composables/useProjects'
 import { Download } from 'lucide-vue-next'
+import Pageheader from '~/components/PageHeader.vue'
 import { addDoc, collection, Timestamp } from 'firebase/firestore'
 
 // Active tab

@@ -1,26 +1,25 @@
 <template>
-  <header class="bg-orange-500 px-4 py-3 flex items-center fixed top-0 left-0 right-0 w-screen z-40">
-    <!-- Sidebar toggle -->
-    <button @click="$emit('toggle-sidebar')" class="p-2 rounded-md hover:bg-gray-200 transition-colors">
-      <Menu class="w-6 h-6" />
-    </button>
-    <h1 class="text-white text-lg font-semibold ml-4">AresDev</h1>
-    <!-- Logout button -->
-    <button @click="logout" class="ml-auto p-2 rounded-md hover:bg-gray-200 transition-colors" title="Cerrar sesión">
-      <LogOut class="w-6 h-6" />
-    </button>
+  <header class="transition-all duration-300">
+    <div class="bg-gray-900 px-4 py-3 flex justify-between items-center rounded-xl shadow-md">
+      <div>
+        <img src="https://i.ibb.co/8ghgry6w/logo.png" alt="logo"
+          class="h-11 w-11 rounded-xl object-cover shadow-md flex-shrink-0" />
+      </div>
+      <div>
+        <h1 class="text-white">AresDev</h1>
+      </div>
+      <div>
+        <button @click="login" class="text-white">
+          Iniciar Sesion
+        </button>
+      </div>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { Menu, LogOut } from 'lucide-vue-next'
 
-defineEmits<{
-  'toggle-sidebar': []
-}>()
-
-const logout = () => {
-  localStorage.removeItem('loggedIn')
-  navigateTo('/')
+const login = () => {
+  navigateTo('login')
 }
 </script>
