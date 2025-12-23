@@ -12,7 +12,10 @@
     'flex flex-col',
     open
       ? 'translate-x-0 w-60 min-w-[160px]'
-      : '-translate-x-full lg:translate-x-0 lg:w-20'
+      :
+    isMobile
+      ? '-translate-x-full w-20 min-w-[80px]'
+      : 'lg:translate-x-0 lg:w-20'
   ]">
     <!-- Header -->
     <div class="h-16 flex items-center justify-between lg:justify-center px-4 border-b border-gray-700">
@@ -35,8 +38,8 @@
 
       <!-- Toggle -->
       <button @click="toggleSidebar"
-        class="p-2 rounded-full bg-gray-700 hover:bg-white-900 transition-colors lg:absolute lg:right-0 lg:translate-x-1/2"
-        :class="open && !isMobile ? 'opacity-0 lg:opacity-100' : 'opacity-100'" aria-label="Toggle sidebar">
+        class="p-2 rounded-full bg-gray-700 hover:bg-gray-900 transition-colors lg:absolute lg:right-0 lg:translate-x-1/2"
+        :class="open ? 'opacity-0 lg:opacity-100' : 'opacity-100'" aria-label="Toggle sidebar">
         <ChevronLeft class="w-5 h-5 text-white transition-transform duration-300" :class="open ? '' : 'rotate-180'" />
       </button>
     </div>
@@ -54,8 +57,10 @@
             <!-- Indicador activo -->
             <span v-if="route.path === item.to"
               class="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-white-900 rounded-r-full"></span>
+
             <!-- Icono -->
             <component :is="item.icon" class="w-6 h-6 flex-shrink-0 transition-transform group-hover:scale-110" />
+
             <!-- Texto -->
             <span class="whitespace-nowrap font-medium transition-all duration-200"
               :class="open ? 'opacity-100 w-auto' : 'opacity-0 w-0'">
@@ -79,15 +84,14 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from '#app'
 import { Home, Folder, User, MessageSquare, ChevronLeft } from 'lucide-vue-next'
 
 const open = ref(true)
-const isMobile = ref(false)
 const sidebarRef = ref(null)
 const route = useRoute()
+const isMobile = ref(false)
 
 const navItems = [
   { to: '/', icon: Home, label: 'Inicio' },
@@ -96,9 +100,7 @@ const navItems = [
   { to: '/quotations', icon: MessageSquare, label: 'Cotizaciones' }
 ]
 
-const currentNav = computed(() =>
-  navItems.find(item => item.to === route.path)
-)
+const currentNav = computed(() => navItems.find(item => item.to === route.path))
 
 const toggleSidebar = () => {
   open.value = !open.value
@@ -110,12 +112,7 @@ const checkMobile = () => {
 }
 
 const handleClickOutside = (event) => {
-  if (
-    isMobile.value &&
-    open.value &&
-    sidebarRef.value &&
-    !sidebarRef.value.contains(event.target)
-  ) {
+  if (isMobile.value && open.value && sidebarRef.value && !sidebarRef.value.contains(event.target)) {
     open.value = false
   }
 }

@@ -85,7 +85,6 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div v-for="project in filteredCompletedProjects" :key="project.id"
             class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
-
             <!-- Project Image/Thumbnail -->
             <div
               class="h-64 relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
@@ -94,7 +93,6 @@
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }"></div>
-
               <!-- Professional Badge -->
               <div class="absolute top-4 right-4">
                 <span :class="getTypeBadgeClasses(project.type)"
@@ -102,7 +100,6 @@
                   {{ getTypeLabel(project.type) }}
                 </span>
               </div>
-
               <!-- Project Status -->
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                 <div class="flex justify-between items-center">
@@ -114,7 +111,6 @@
                 </div>
               </div>
             </div>
-
             <!-- Project Details -->
             <div class="p-4 md:p-6">
               <div class="flex items-center space-x-4 md:space-x-6">
@@ -142,44 +138,26 @@
                 </div>
               </div>
               <!-- Project Stats -->
-              <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div
+                class="flex justify-center items-center space-x-2 mt-4">
                 <!-- Action Buttons -->
-                <div class="flex flex-col space-y-3 md:flex-row md:space-y-0 md:space-x-3">
-                  <button v-if="project.documentationLink" @click.stop="openDocumentation(project.documentationLink)"
-                    class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors duration-300 flex items-center border border-gray-300 dark:border-gray-600"
-                    title="Ver documentación">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Docs
-                  </button>
-
-                  <button v-if="project.demoLink" @click.stop="openDemo(project.demoLink)"
-                    class="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors duration-300 flex items-center border border-blue-200 dark:border-blue-800"
-                    title="Ver demostración">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Demo
-                  </button>
-
-                  <button v-if="project.tiktokLink" @click.stop="openTikTok(project.tiktokLink, project.id)"
-                    class="px-3 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-xs font-medium flex items-center transition-all duration-300 transform hover:scale-105 active:scale-95"
-                    title="Ver video en TikTok">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                <div>
+                  <button
+                    v-if="project.tiktokLink"
+                    @click.stop="openTikTok(project.tiktokLink, project.id)"
+                    class="mr-2 px-3 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-xs font-medium flex items-center transition-all duration-300 transform hover:scale-105 active:scale-95"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                       <path
                         d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z" />
                     </svg>
                     Video
                   </button>
-
+                </div>
+                <div>
                   <button v-if="project.downloadLink"
                     @click.stop="downloadProject(project.downloadLink); incrementDownloads(project.id)"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-300 flex items-center shadow-md hover:shadow-lg">
+                    class="mr-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium flex items-center transition-colors duration-300 shadow-md hover:shadow-lg">
                     <Download class="w-4 h-4 mr-2" />
                     Descargar
                   </button>
