@@ -8,7 +8,6 @@
           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'">
           Gratuitos
         </button>
-
         <button @click="activeTab = 'personalizadas'" class="py-4 px-1 border-b-2 font-medium text-sm" :class="activeTab === 'personalizadas'
           ? 'border-blue-500 text-blue-600'
           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'">
@@ -17,10 +16,9 @@
       </nav>
     </PageHeader>
 
-
     <!-- Projects Section -->
     <div v-if="activeTab === 'gratuitos'">
-      <main class="container mx-auto px-6 py-12">
+      <main class="container mx-auto py-6">
         <div class="mb-10">
           <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Proyectos Destacados</h2>
           <p class="text-gray-600 dark:text-gray-400">
@@ -50,7 +48,7 @@
               ]">
                 Desarrollo Web
               </button>
-              <button @click="selectedType = 'app'" :class="[
+              <!-- <button @click="selectedType = 'app'" :class="[
                 'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
                 'border',
                 selectedType === 'app'
@@ -58,8 +56,8 @@
                   : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
               ]">
                 Aplicaciones
-              </button>
-              <button @click="selectedType = 'excel'" :class="[
+              </button> -->
+              <!-- <button @click="selectedType = 'excel'" :class="[
                 'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
                 'border',
                 selectedType === 'excel'
@@ -74,9 +72,9 @@
                 selectedType === 'other'
                   ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
                   : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
-              ]">
-                Otros Proyectos
-              </button>
+              ]"> -->
+                <!-- Otros Proyectos
+              </button> -->
             </div>
           </div>
         </div>
