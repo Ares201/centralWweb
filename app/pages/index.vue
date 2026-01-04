@@ -30,51 +30,15 @@
         <div class="max-w-4xl mx-auto mb-8">
           <div class="mb-4 hidden md:flex">
             <div class="flex flex-wrap justify-center gap-3">
-              <button @click="selectedType = 'all'" :class="[
+              <button v-for="type in uniqueTypes" :key="type" @click="selectedType = type" :class="[
                 'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
                 'border',
-                selectedType === 'all'
+                selectedType === type
                   ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
                   : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
               ]">
-                Todas las categorías
+                {{ type === 'all' ? 'Todas las categorías' : getTypeLabel(type) }}
               </button>
-              <button @click="selectedType = 'web'" :class="[
-                'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
-                'border',
-                selectedType === 'web'
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
-              ]">
-                Desarrollo Web
-              </button>
-              <!-- <button @click="selectedType = 'app'" :class="[
-                'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
-                'border',
-                selectedType === 'app'
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
-              ]">
-                Aplicaciones
-              </button> -->
-              <!-- <button @click="selectedType = 'excel'" :class="[
-                'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
-                'border',
-                selectedType === 'excel'
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
-              ]">
-                Automatización
-              </button>
-              <button @click="selectedType = 'other'" :class="[
-                'px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300',
-                'border',
-                selectedType === 'other'
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:shadow-md'
-              ]"> -->
-                <!-- Otros Proyectos
-              </button> -->
             </div>
           </div>
         </div>
@@ -266,11 +230,11 @@
                         </div>
                         <div class="flex justify-end space-x-3 pt-4">
                           <button @click="showContactForm = false" type="button"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">
+                            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-transparent border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancelar
                           </button>
                           <button type="submit"
-                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            class="px-4 py-2 text-sm font-medium text-orange-600 bg-transparent border border-orange-600 rounded-md hover:bg-orange-50 dark:hover:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                             Enviar
                           </button>
                         </div>
@@ -323,8 +287,8 @@ import { addDoc, collection, Timestamp } from 'firebase/firestore'
 // Active tab
 const activeTab = ref<'gratuitos' | 'personalizadas'>('gratuitos')
 
-const { projects, incrementViews, incrementViewsTiktok, incrementDownloads } = useProjects()
-const selectedType = ref<'all' | 'web' | 'app' | 'excel' | 'other'>('all')
+const { projects, uniqueTypes, incrementViews, incrementViewsTiktok, incrementDownloads } = useProjects()
+const selectedType = ref<string>('all')
 const { $db } = useNuxtApp()
 
 // Contact form
@@ -391,14 +355,14 @@ const getTypeBadgeClasses = (type: 'web' | 'app' | 'excel' | 'other') => {
   return classes[type]
 }
 
-const getTypeLabel = (type: 'web' | 'app' | 'excel' | 'other') => {
-  const labels = {
+const getTypeLabel = (type: string) => {
+  const labels: Record<string, string> = {
     web: 'Desarrollo Web',
     app: 'Aplicación',
     excel: 'Automatización',
     other: 'Solución Personalizada'
   }
-  return labels[type]
+  return (labels as any)[type] || type
 }
 
 const downloadProject = (link: string) => {

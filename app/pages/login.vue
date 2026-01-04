@@ -114,8 +114,11 @@ const handleLogin = async () => {
     username.value = ''
     password.value = ''
   } else {
-    // Login
-    const user = users.value.find(
+    // Login - Load users first
+    const querySnapshot = await getDocs(collection($db, 'users'))
+    const loadedUsers = querySnapshot.docs.map(doc => doc.data() as DocumentData)
+
+    const user = loadedUsers.find(
       (u: any) => u.username === username.value && u.password === password.value
     )
 

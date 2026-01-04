@@ -40,17 +40,14 @@
           <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Tipo *
           </label>
-          <select
+          <input
             id="type"
             v-model="form.type"
+            type="text"
             required
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-          >
-            <option value="web">Web</option>
-            <option value="app">Aplicación</option>
-            <option value="excel">Excel</option>
-            <option value="other">Otro</option>
-          </select>
+            placeholder="Ej: web, móvil, IA, etc."
+          />
         </div>
 
         <div v-if="isEditing">
@@ -99,14 +96,14 @@
         <button
           @click="$emit('cancel')"
           type="button"
-          class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-transparent border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
           Cancelar
         </button>
         <button
           @click="handleSubmit"
           type="button"
-          class="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          class="px-4 py-2 text-sm font-medium text-orange-600 bg-transparent border border-orange-600 rounded-md hover:bg-orange-50 dark:hover:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
         >
           {{ isEditing ? 'Actualizar' : 'Crear' }}
         </button>
@@ -135,12 +132,13 @@ const isEditing = computed(() => !!props.project)
 const form = ref({
   title: '',
   description: '',
-  type: 'web' as Project['type'],
+  type: '' as Project['type'],
   status: 'completed' as Project['status'],
   downloadLink: '',
   imageUrl: '',
   views: 0,
-  viewsTiktok: 0
+  viewsTiktok: 0,
+  downloads: 0
 })
 
 watch(() => props.project, (newProject) => {
@@ -153,18 +151,20 @@ watch(() => props.project, (newProject) => {
       downloadLink: newProject.downloadLink || '',
       imageUrl: newProject.imageUrl || '',
       views: newProject.views,
-      viewsTiktok: newProject.viewsTiktok
+      viewsTiktok: newProject.viewsTiktok,
+      downloads: newProject.downloads
     }
   } else {
     form.value = {
       title: '',
       description: '',
-      type: 'web',
+      type: '',
       status: 'completed',
       downloadLink: '',
       imageUrl: '',
       views: 0,
-      viewsTiktok: 0
+      viewsTiktok: 0,
+      downloads: 0
     }
   }
 }, { immediate: true })

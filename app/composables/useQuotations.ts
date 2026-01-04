@@ -45,6 +45,19 @@ export const useQuotations = () => {
 
   onMounted(loadQuotations)
 
+  const searchQuery = ref('')
+
+  const filteredQuotations = computed(() =>
+    quotations.value.filter(quotation => {
+      const matchesSearch =
+        quotation.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        quotation.phone.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        quotation.comment.toLowerCase().includes(searchQuery.value.toLowerCase())
+
+      return matchesSearch
+    })
+  )
+
   const addQuotation = async (
     quotationData: Omit<Quotation, 'id' | 'createdAt'>
   ) => {
@@ -70,6 +83,8 @@ export const useQuotations = () => {
 
   return {
     quotations: readonly(quotations),
+    filteredQuotations,
+    searchQuery,
     addQuotation,
     updateQuotation,
     deleteQuotation,

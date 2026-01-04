@@ -91,23 +91,23 @@ defineEmits<{
 }>()
 
 const getTypeBadgeClasses = (type: Project['type']) => {
-  const classes = {
+  const classes: Record<string, string> = {
     web: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
     app: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
     excel: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
     other: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
   }
-  return classes[type]
+  return (classes as any)[type] || 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
 }
 
 const getTypeLabel = (type: Project['type']) => {
-  const labels = {
+  const labels: Record<string, string> = {
     web: 'Web',
     app: 'App',
     excel: 'Excel',
     other: 'Otro'
   }
-  return labels[type]
+  return (labels as any)[type] || type
 }
 
 const getStatusBadgeClasses = (status: Project['status']) => {

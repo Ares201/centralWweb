@@ -19,27 +19,25 @@
       </div>
 
       <!-- Type Filter -->
-      <div class="md:w-48">
+      <div v-if="props.selectedType !== undefined" class="md:w-48">
         <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Tipo
+          {{ typeLabel || 'Tipo' }}
         </label>
         <select
           id="type"
           v-model="selectedType"
           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
         >
-          <option value="all">Todos los tipos</option>
-          <option value="web">Web</option>
-          <option value="app">Aplicación</option>
-          <option value="excel">Excel</option>
-          <option value="other">Otro</option>
+          <option v-for="type in uniqueTypes || ['all', 'web', 'app', 'excel', 'other']" :key="type" :value="type">
+            {{ type === 'all' ? 'Todos' : type === 'web' ? 'Web' : type === 'app' ? 'Aplicación' : type === 'excel' ? 'Excel' : type === 'other' ? 'Otro' : type }}
+          </option>
         </select>
       </div>
 
       <!-- Status Filter -->
-      <div class="md:w-48">
+      <div v-if="props.selectedStatus !== undefined" class="md:w-48">
         <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Estado
+          {{ statusLabel || 'Estado' }}
         </label>
         <select
           id="status"
@@ -62,8 +60,11 @@ import { Search } from 'lucide-vue-next'
 
 interface Props {
   searchQuery: string
-  selectedType: string
-  selectedStatus: string
+  selectedType?: string
+  selectedStatus?: string
+  typeLabel?: string
+  statusLabel?: string
+  uniqueTypes?: string[]
 }
 
 const props = defineProps<Props>()
@@ -80,12 +81,12 @@ const searchQuery = computed({
 })
 
 const selectedType = computed({
-  get: () => props.selectedType,
+  get: () => props.selectedType || 'all',
   set: (value) => emit('update:selectedType', value)
 })
 
 const selectedStatus = computed({
-  get: () => props.selectedStatus,
+  get: () => props.selectedStatus || 'all',
   set: (value) => emit('update:selectedStatus', value)
 })
 </script>

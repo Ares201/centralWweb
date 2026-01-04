@@ -20,6 +20,9 @@
         </div>
       </PageHeader>
 
+      <!-- Search -->
+      <SearchFilter :search-query="searchQuery" :selected-type="selectedRole" :type-label="'Rol'" @update:search-query="searchQuery = $event" @update:selected-type="selectedRole = $event" />
+
       <!-- Users Table -->
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <table class="min-w-full divide-y">
@@ -37,7 +40,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            <tr v-for="user in users" :key="user.id">
+            <tr v-for="user in filteredUsers" :key="user.id">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10">
@@ -73,7 +76,7 @@
       <!-- Add/Edit Form Modal -->
       <div v-if="showAddForm || editingUser"
         class="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-gray-800 dark:bg-gray-800">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
           <div class="mt-3">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
               {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
@@ -105,11 +108,11 @@
               </div>
               <div class="flex justify-end space-x-3 pt-4">
                 <button @click="closeForm" type="button"
-                  class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-800 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">
+                  class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-transparent border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                   Cancelar
                 </button>
                 <button type="submit"
-                  class="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                  class="px-4 py-2 text-sm font-medium text-orange-600 bg-transparent border border-orange-600 rounded-md hover:bg-orange-50 dark:hover:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                   {{ isEditing ? 'Actualizar' : 'Crear' }}
                 </button>
               </div>
@@ -123,11 +126,15 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useState } from 'nuxt/app'
 import { Plus } from 'lucide-vue-next'
 import type { User } from '../composables/useUsers'
 import { useUsers } from '../composables/useUsers'
 
-const { users, addUser, updateUser, deleteUser } = useUsers()
+const { filteredUsers, searchQuery, selectedRole, addUser, updateUser, deleteUser } = useUsers()
+
+const userState = useState<{ username: string; role: string } | null>('user', () => null)
+const isAdmin = computed(() => userState.value?.role === 'admin')
 
 const showAddForm = ref(false)
 const editingUser = ref<User | null>(null)
@@ -139,6 +146,8 @@ const form = ref({
   password: '',
   role: 'user' as 'user' | 'admin'
 })
+
+
 
 const handleEdit = (user: User) => {
   editingUser.value = user

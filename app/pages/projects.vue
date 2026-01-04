@@ -5,14 +5,14 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Gestión de Proyectos
         </h1>
-        <button v-if="isAdmin" class="w-8 h-8 rounded-full flex items-center justify-center bg-orange-500">
+        <button v-if="isAdmin" @click="showAddForm = true" class="w-8 h-8 rounded-full flex items-center justify-center bg-orange-500">
           <Plus class="w-4 h-4 text-white" />
         </button>
       </div>
     </PageHeader>
 
     <!-- Search and Filters -->
-    <SearchFilter :search-query="searchQuery" :selected-type="selectedType" :selected-status="selectedStatus"
+    <SearchFilter :search-query="searchQuery" :selected-type="selectedType" :selected-status="selectedStatus" :unique-types="uniqueTypes"
       @update:search-query="searchQuery = $event" @update:selected-type="selectedType = $event"
       @update:selected-status="selectedStatus = $event" />
 
@@ -65,17 +65,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useState } from 'nuxt/app'
 import { Plus, List, Kanban, Folder } from 'lucide-vue-next'
 import { useProjects } from '../composables/useProjects'
-import SearchFilter from '../components/SearchFilter.vue'
-import ProjectTable from '../components/ProjectTable.vue'
-import ProjectKanban from '../components/ProjectKanban.vue'
-import ProjectForm from '../components/ProjectForm.vue'
 import type { Project } from '../composables/useProjects'
 
 const {
   filteredProjects,
+  uniqueTypes,
   searchQuery,
   selectedType,
   selectedStatus,
@@ -84,6 +82,9 @@ const {
   deleteProject,
   updateProjectStatus
 } = useProjects()
+
+const userState = useState<{ username: string; role: string } | null>('user', () => null)
+const isAdmin = computed(() => userState.value?.role === 'admin')
 
 const currentView = ref<'table' | 'kanban'>('table')
 const showAddForm = ref(false)

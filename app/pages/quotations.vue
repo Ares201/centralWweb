@@ -24,39 +24,8 @@
           </div>
         </PageHeader>
 
-        <!-- Add/Edit Form -->
-        <div v-if="showAddForm || editingQuotation"
-          class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700">
-          <form @submit.prevent="handleSave" class="space-y-4">
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Nombre
-              </label>
-              <input id="name" v-model="form.name" type="text" required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white" />
-            </div>
-            <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Teléfono
-              </label>
-              <input id="phone" v-model="form.phone" type="tel" required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white" />
-            </div>
-            <div>
-              <label for="comment" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Comentario
-              </label>
-              <textarea id="comment" v-model="form.comment" required rows="3"
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white"></textarea>
-            </div>
-            <div class="flex gap-2">
-              <button type="submit"
-                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-md">Guardar</button>
-              <button type="button" @click="closeForm"
-                class="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-md">Cancelar</button>
-            </div>
-          </form>
-        </div>
+        <!-- Search -->
+        <SearchFilter :search-query="searchQuery" @update:search-query="searchQuery = $event" />
       </div>
 
       <!-- Quotations Table -->
@@ -82,7 +51,7 @@
             </tr>
           </thead>
           <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="quotation in quotations" :key="quotation.id">
+            <tr v-for="quotation in filteredQuotations" :key="quotation.id">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900 dark:text-white">
                   {{ quotation.name }}
@@ -112,6 +81,51 @@
         </table>
       </div>
 
+      <!-- Add/Edit Form Modal -->
+      <div v-if="showAddForm || editingQuotation"
+        class="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+          <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              {{ isEditing ? 'Editar Cotización' : 'Nueva Cotización' }}
+            </h3>
+            <form @submit.prevent="handleSave" class="space-y-4">
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Nombre
+                </label>
+                <input id="name" v-model="form.name" type="text" required
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white" />
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Teléfono
+                </label>
+                <input id="phone" v-model="form.phone" type="tel" required
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white" />
+              </div>
+              <div>
+                <label for="comment" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Comentario
+                </label>
+                <textarea id="comment" v-model="form.comment" required rows="3"
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white"></textarea>
+              </div>
+              <div class="flex justify-end space-x-3 pt-4">
+                <button @click="closeForm" type="button"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-transparent border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                  Cancelar
+                </button>
+                <button type="submit"
+                  class="px-4 py-2 text-sm font-medium text-orange-600 bg-transparent border border-orange-600 rounded-md hover:bg-orange-50 dark:hover:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                  {{ isEditing ? 'Actualizar' : 'Crear' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -119,10 +133,14 @@
 <script setup lang="ts">
 import { Plus } from 'lucide-vue-next'
 import { ref, computed } from 'vue'
+import { useState } from 'nuxt/app'
 import type { Quotation } from '../composables/useQuotations'
 import { useQuotations } from '../composables/useQuotations'
 
-const { quotations, addQuotation, updateQuotation, deleteQuotation } = useQuotations()
+const { filteredQuotations, searchQuery, addQuotation, updateQuotation, deleteQuotation } = useQuotations()
+
+const userState = useState<{ username: string; role: string } | null>('user', () => null)
+const isAdmin = computed(() => userState.value?.role === 'admin')
 
 const showAddForm = ref(false)
 const editingQuotation = ref<Quotation | null>(null)

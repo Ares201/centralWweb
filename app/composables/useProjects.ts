@@ -12,7 +12,7 @@ export interface Project {
   id: string
   title: string
   description: string
-  type: 'web' | 'app' | 'excel' | 'other'
+  type: string
   status: 'planning' | 'in-progress' | 'completed'
   downloadLink?: string
   imageUrl?: string
@@ -88,6 +88,11 @@ export const useProjects = () => {
     })
   )
 
+  const uniqueTypes = computed(() => {
+    const types = projects.value.map(p => p.type)
+    return [...new Set(types), 'all']
+  })
+
   const addProject = async (
     projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>
   ) => {
@@ -151,6 +156,7 @@ export const useProjects = () => {
   return {
     projects: readonly(projects),
     filteredProjects,
+    uniqueTypes,
     searchQuery,
     selectedType,
     selectedStatus,

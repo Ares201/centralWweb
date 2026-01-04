@@ -47,6 +47,22 @@ export const useUsers = () => {
 
   onMounted(loadUsers)
 
+  const searchQuery = ref('')
+  const selectedRole = ref<string>('all')
+
+  const filteredUsers = computed(() =>
+    users.value.filter(user => {
+      const matchesSearch =
+        user.username.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchQuery.value.toLowerCase())
+
+      const matchesRole =
+        selectedRole.value === 'all' || user.role === selectedRole.value
+
+      return matchesSearch && matchesRole
+    })
+  )
+
   const addUser = async (
     userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>
   ) => {
@@ -76,6 +92,9 @@ export const useUsers = () => {
 
   return {
     users: readonly(users),
+    filteredUsers,
+    searchQuery,
+    selectedRole,
     addUser,
     updateUser,
     deleteUser,

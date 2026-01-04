@@ -18,17 +18,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useState } from 'nuxt/app'
 import Sidebar from '~/components/Sidebar.vue'
 import Toolbar from '~/components/Toolbar.vue'
 import SideRight from '~/components/Siderigth.vue'
 
 const sidebarOpen = ref(true)
 
-// Leer cookies de usuario con default como función
-const roleCookie = useCookie<string>('role', { default: () => '' })
-const usernameCookie = useCookie<string>('user', { default: () => '' })
+const userState = useState<{ username: string; role: string } | null>('user', () => null)
 
-const isAdmin = computed(() => roleCookie.value === 'admin')
-const username = computed(() => usernameCookie.value)
+const isAdmin = computed(() => userState.value?.role === 'admin')
+const username = computed(() => userState.value?.username || '')
 </script>
 
